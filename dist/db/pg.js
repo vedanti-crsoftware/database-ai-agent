@@ -40,7 +40,7 @@ function connectDB() {
             Create TABLE IF NOT EXISTS schema_embeddings (
             id SERIAL PRIMARY KEY,
             schema_text TEXT,
-            embedding vector(1536)
+            embedding vector(1024)
             );
         `);
             console.log("created schema embedding table");
