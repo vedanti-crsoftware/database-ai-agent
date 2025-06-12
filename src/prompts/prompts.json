@@ -1,0 +1,3 @@
+{
+    "generateSQL" : "Considering the schema provided: {{schema}}. \n\nAnswer the following question using SQL: Question: {{naturalQuery}} . Your SQL query should retrieve the requested information without any additional characters or spaces. Remove any delimiter if present like \\n or newline character. Please ensure the query is formatted correctly and only includes the necessary components. End with semicolon"
+}
