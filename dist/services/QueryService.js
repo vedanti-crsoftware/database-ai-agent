@@ -23,19 +23,27 @@ class QueryService {
     }
     initalize() {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("trying the inialize in queryservice");
             yield this.postgres.connect();
+            console.log("done inialize in queryservice");
         });
     }
     handleSchemaAndQuery(schema, query) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("In QueryService.. handleSchemaAndQuery");
             const schemaEmbedding = yield this.bedrock.getEmbedding(schema);
+            console.log("In QueryService.. this is schemaEmbedding : ", schemaEmbedding);
             yield this.postgres.storeSchemaEmbedding(schema, schemaEmbedding);
+            console.log("In QueryService.. storeSchemaEmbedding Successful");
             const queryEmbedding = yield this.bedrock.getEmbedding(query);
+            console.log("In QueryService.. this is queryEmbedding: ", queryEmbedding);
             const matchedSchema = yield this.postgres.findMatchingSchema(queryEmbedding);
+            console.log("In QueryService.. this is matchedSchema: ", matchedSchema);
             const promptTemplate = prompts_json_1.default.generateSQL;
             const prompt = promptTemplate
                 .replace("{{schema}}", matchedSchema)
                 .replace("{{question}}", query);
+            console.log("In QueryService... this is final prompt:", prompt);
             const sql = yield this.bedrock.getClaudeResponse(prompt);
             return sql;
         });

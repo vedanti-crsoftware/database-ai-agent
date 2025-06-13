@@ -14,14 +14,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BedrockService = void 0;
 const client_bedrock_runtime_1 = require("@aws-sdk/client-bedrock-runtime");
+const node_http_handler_1 = require("@aws-sdk/node-http-handler");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 class BedrockService {
     constructor() {
-        this.client = new client_bedrock_runtime_1.BedrockRuntimeClient({ region: process.env.AWS_REGION });
+        this.client = new client_bedrock_runtime_1.BedrockRuntimeClient({ region: process.env.AWS_REGION, requestHandler: new node_http_handler_1.NodeHttpHandler({
+                connectionTimeout: 30000, // 5 seconds to establish connection
+                socketTimeout: 60000 // 60 seconds for data transfer
+            })
+        });
     }
     getEmbedding(text) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("In BedrockService... this is getEmbedding");
             const input = {
                 "modelId": "amazon.titan-embed-text-v2:0",
                 "contentType": "application/json",

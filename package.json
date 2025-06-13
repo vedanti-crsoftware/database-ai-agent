@@ -12,6 +12,8 @@
   "type": "commonjs",
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.817.0",
+    "@aws-sdk/client-lambda": "^3.828.0",
+    "@aws-sdk/node-http-handler": "^3.370.0",
     "aws-sdk": "^2.1692.0",
     "body-parser": "^2.2.0",
     "dotenv": "^16.5.0",
@@ -19,10 +21,12 @@
     "pg": "^8.16.0"
   },
   "devDependencies": {
+    "@codegenie/serverless-express": "^4.16.0",
     "@types/body-parser": "^1.19.6",
     "@types/express": "^5.0.3",
     "@types/node": "^22.15.27",
     "@types/pg": "^8.15.2",
+    "serverless": "^4.17.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }

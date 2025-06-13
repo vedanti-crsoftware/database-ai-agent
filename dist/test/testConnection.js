@@ -21,9 +21,10 @@ function testConnection() {
             host: process.env.RDS_HOST,
             user: process.env.RDS_USER,
             password: process.env.RDS_PASSWORD,
-            database: "postgres",
+            database: process.env.RDS_DB || "postgres",
             port: 5432,
-            ssl: { rejectUnauthorized: false }
+            ssl: { rejectUnauthorized: false },
+            connectionTimeoutMillis: 30000,
         });
         try {
             console.log(`Attempting to connect to ${process.env.RDS_HOST}...`);

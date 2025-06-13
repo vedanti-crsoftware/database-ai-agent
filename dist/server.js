@@ -20,21 +20,40 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
 const queryService = new QueryService_1.QueryService();
+(function init() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            console.log("Initializing QueryService...");
+            yield queryService.initalize();
+            console.log("QueryService initialized successfully");
+        }
+        catch (err) {
+            console.error("Failed to initialize QueryService:", err);
+        }
+    });
+})();
 app.use(body_parser_1.default.json());
 app.post("/generate-sql", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { schema, query } = req.body;
+    console.log("Received request to generate SQL");
     if (!schema || !query) {
+        console.log("Missing schema or query in request");
         return res.status(400).json({ error: "Missing schema or query" });
     }
     try {
+        console.log("Processing schema and query...");
         const result = yield queryService.handleSchemaAndQuery(schema, query);
+        console.log("SQL generation successful");
         res.json({ sql: result });
     }
     catch (err) {
+        console.error("Error generating SQL:", err);
         res.status(500).json({ error: "Something went wrong" });
     }
 }));
-app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
-    yield queryService.initalize();
-    console.log(`Server listening on port ${port}`);
-}));
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log(`Server listening on port ${port} (local development)`);
+    });
+}
+exports.default = app;

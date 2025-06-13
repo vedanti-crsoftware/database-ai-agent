@@ -25,7 +25,7 @@ class PostgresService {
             database: process.env.RDS_DB || "postgres",
             port: parseInt(process.env.RDS_PORT || "5432"),
             ssl: { rejectUnauthorized: false },
-            connectionTimeoutMillis: 100000,
+            connectionTimeoutMillis: 60000,
         });
     }
     connect() {
@@ -51,14 +51,14 @@ class PostgresService {
             console.log("this is schemaText: ", schemaText);
             console.log("schemaText length", schemaText.length);
             console.log("this is type of schemaText", typeof (schemaText));
-            const vectorLiteral = embedding.join(",");
+            const vectorLiteral = `[${embedding.join(",")}]`;
             yield this.client.query(`INSERT INTO schema_embeddings (schema_text, embedding) VALUES ($1, $2::vector)`, [schemaText, vectorLiteral]);
         });
     }
     findMatchingSchema(queryEmbedding) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
-            const formatted = queryEmbedding.join(",");
+            const formatted = `[${queryEmbedding.join(",")}]`;
             const result = yield this.client.query("SELECT schema_text FROM schema_embeddings ORDER BY embedding <-> $1::vector LIMIT 1;", [formatted]);
             return ((_a = result.rows[0]) === null || _a === void 0 ? void 0 : _a.schema_text) || "";
         });

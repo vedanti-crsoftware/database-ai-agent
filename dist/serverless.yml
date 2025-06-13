@@ -1,0 +1,36 @@
+service: database-ai-agent
+
+provider:
+  name: aws
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+  runtime: nodejs20.x
+  region: us-east-1
+  vpc:
+    securityGroupIds:
+      - sg-09db193ac792fb39d
+    subnetIds:
+      - subnet-0c238a28925e5edcd
+      - subnet-0f324bf5af082051a
+      - subnet-0802dee95d6c10559
+      - subnet-012ddd0c915964410
+  environment: 
+    REGION: ${env:AWS_REGION}
+    RDS_HOST: ${env:RDS_HOST}
+    RDS_USER: ${env:RDS_USER}
+    RDS_PASSWORD: ${env:RDS_PASSWORD}
+    RDS_DB: ${env:RDS_DB}
+    RDS_PORT: ${env:RDS_PORT,'5432'}
+    NODE_OPTIONS: '--enable-source-maps'
+  
+functions:
+  api:
+    handler: lambda.handler
+    timeout: 60
+    events:
+      - httpApi:
+          path: /generate-sql
+          method: post
+
+

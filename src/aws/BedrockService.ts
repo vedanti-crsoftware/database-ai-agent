@@ -1,4 +1,5 @@
 import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
+import { NodeHttpHandler } from "@aws-sdk/node-http-handler";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -6,10 +7,15 @@ export class BedrockService {
     private client: BedrockRuntimeClient;
 
     constructor() {
-        this.client = new BedrockRuntimeClient({ region: process.env.AWS_REGION});
+        this.client = new BedrockRuntimeClient({ region: process.env.AWS_REGION, requestHandler: new NodeHttpHandler({
+                connectionTimeout: 30000,  // 5 seconds to establish connection
+                socketTimeout: 60000      // 60 seconds for data transfer
+            })
+        });
     }
 
     async getEmbedding(text: string): Promise<number[]> {
+        console.log("In BedrockService... this is getEmbedding");
         const input = {
             "modelId": "amazon.titan-embed-text-v2:0",
             "contentType": "application/json",
