@@ -45,7 +45,10 @@ class QueryService {
                 .replace("{{question}}", query);
             console.log("In QueryService... this is final prompt:", prompt);
             const sql = yield this.bedrock.getClaudeResponse(prompt);
-            return sql;
+            console.log("Executing generated SQL query");
+            const result = yield this.postgres.executeQuery(sql);
+            console.log("SQL execution complete, returning results");
+            return { sql, result };
         });
     }
 }

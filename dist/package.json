@@ -24,5 +24,8 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "pg": "^8.16.0"
+  },
+  "devDependencies": {
+    "serverless-dotenv-plugin": "^6.0.0"
   }
 }

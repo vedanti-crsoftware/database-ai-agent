@@ -8,8 +8,8 @@ export class BedrockService {
 
     constructor() {
         this.client = new BedrockRuntimeClient({ region: process.env.AWS_REGION, requestHandler: new NodeHttpHandler({
-                connectionTimeout: 30000,  // 5 seconds to establish connection
-                socketTimeout: 60000      // 60 seconds for data transfer
+                connectionTimeout: 60000,  // 5 seconds to establish connection
+                socketTimeout: 90000      // 60 seconds for data transfer
             })
         });
     }

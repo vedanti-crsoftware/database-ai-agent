@@ -9,6 +9,7 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+const host = process.env.RDS_HOST;
 const  queryService = new QueryService();
 
 (async function init() {
@@ -35,17 +36,18 @@ app.post("/generate-sql", async (req : any, res : any) => {
 
     try {
         console.log("Processing schema and query...");
-        const result = await queryService.handleSchemaAndQuery(schema, query);
-        console.log("SQL generation successful");
-        res.json({sql: result});
+        const { sql, result } = await queryService.handleSchemaAndQuery(schema, query);
+        console.log("SQL generation and execution successful");
+        res.json({ sql, result });
     } catch (err) {
-        console.error("Error generating SQL:", err);
+        console.error("Error generating SQL & Execution:", err);
         res.status(500).json({error: "Something went wrong"});
     }
 });
 
 if (process.env.NODE_ENV !== 'production') {
   app.listen(port, () => {
+    console.log("This is the host :",host);
     console.log(`Server listening on port ${port} (local development)`);
   });
 }

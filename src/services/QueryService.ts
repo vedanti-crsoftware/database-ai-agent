@@ -17,7 +17,7 @@ export class QueryService {
         console.log("done inialize in queryservice");
     }
     
-    async handleSchemaAndQuery(schema: string, query: string): Promise<string> {
+    async handleSchemaAndQuery(schema: string, query: string): Promise<{sql: string, result: any[]}>  {
         console.log("In QueryService.. handleSchemaAndQuery");
         const schemaEmbedding = await this.bedrock.getEmbedding(schema);
         console.log("In QueryService.. this is schemaEmbedding : ", schemaEmbedding);
@@ -35,6 +35,11 @@ export class QueryService {
             .replace("{{question}}", query);
         console.log("In QueryService... this is final prompt:", prompt);
         const sql = await this.bedrock.getClaudeResponse(prompt);
-        return sql
+         console.log("Executing generated SQL query");
+        
+        const result = await this.postgres.executeQuery(sql);
+        console.log("SQL execution complete, returning results");
+        
+        return { sql, result };
     }
 }

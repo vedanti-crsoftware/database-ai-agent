@@ -2,6 +2,75 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "The AWS CloudFormation template for this Serverless application",
   "Resources": {
+    "ServerlessDeploymentBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "ServerlessDeploymentBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "ServerlessDeploymentBucket"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      },
+                      "/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      }
+                    ]
+                  ]
+                }
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
     "ApiLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
@@ -104,23 +173,25 @@
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
-          "S3Bucket": "serverless-framework-deployments-us-east-1-62797585-7310",
-          "S3Key": "serverless/database-ai-agent/dev/1749811267489-2025-06-13T10:41:07.489Z/database-ai-agent.zip"
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/database-ai-agent/dev/1750424931121-2025-06-20T13:08:51.121Z/database-ai-agent.zip"
         },
         "Handler": "lambda.handler",
         "Runtime": "nodejs20.x",
         "FunctionName": "database-ai-agent-dev-api",
         "MemorySize": 1024,
-        "Timeout": 60,
+        "Timeout": 90,
         "Environment": {
           "Variables": {
-            "REGION": "us-east-1",
-            "RDS_HOST": "database-ai-serverless-instance-1.c0rbgfquus96.us-east-1.rds.amazonaws.com",
+            "RDS_HOST": "database-ai-agent-aurora-instance-1.c0rbgfquus96.us-east-1.rds.amazonaws.com",
             "RDS_USER": "postgres",
             "RDS_PASSWORD": "postgres",
             "RDS_DB": "databaseaiagent",
             "RDS_PORT": "5432",
-            "NODE_OPTIONS": "--enable-source-maps"
+            "NODE_OPTIONS": "--enable-source-maps",
+            "AWS_REGION": "us-east-1"
           }
         },
         "Role": {
@@ -145,14 +216,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersion6nE2HZn4mE54J5XAhnPiJCTDwV3DWPVpJmhl2UXw": {
+    "ApiLambdaVersion9Wy9YihkX23joj9F0rKlIEuqy5GDXwp3DEtUEzJdM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "QCD+CNegaLJ/jz18b6KmMpYvoqCVxMxWvVBhwW2cCoM="
+        "CodeSha256": "DYl7gcpddCXzTmxYikCK95enJmGJNxBPt/S5raEg31w="
       }
     },
     "HttpApi": {
@@ -253,7 +324,9 @@
   },
   "Outputs": {
     "ServerlessDeploymentBucketName": {
-      "Value": "serverless-framework-deployments-us-east-1-62797585-7310",
+      "Value": {
+        "Ref": "ServerlessDeploymentBucket"
+      },
       "Export": {
         "Name": "sls-database-ai-agent-dev-ServerlessDeploymentBucketName"
       }
@@ -261,7 +334,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersion6nE2HZn4mE54J5XAhnPiJCTDwV3DWPVpJmhl2UXw"
+        "Ref": "ApiLambdaVersion9Wy9YihkX23joj9F0rKlIEuqy5GDXwp3DEtUEzJdM"
       },
       "Export": {
         "Name": "sls-database-ai-agent-dev-ApiLambdaFunctionQualifiedArn"

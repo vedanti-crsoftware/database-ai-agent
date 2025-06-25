@@ -20,8 +20,8 @@ dotenv_1.default.config();
 class BedrockService {
     constructor() {
         this.client = new client_bedrock_runtime_1.BedrockRuntimeClient({ region: process.env.AWS_REGION, requestHandler: new node_http_handler_1.NodeHttpHandler({
-                connectionTimeout: 30000, // 5 seconds to establish connection
-                socketTimeout: 60000 // 60 seconds for data transfer
+                connectionTimeout: 60000, // 5 seconds to establish connection
+                socketTimeout: 90000 // 60 seconds for data transfer
             })
         });
     }

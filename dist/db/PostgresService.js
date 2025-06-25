@@ -25,7 +25,7 @@ class PostgresService {
             database: process.env.RDS_DB || "postgres",
             port: parseInt(process.env.RDS_PORT || "5432"),
             ssl: { rejectUnauthorized: false },
-            connectionTimeoutMillis: 60000,
+            connectionTimeoutMillis: 90000,
         });
     }
     connect() {
@@ -33,10 +33,11 @@ class PostgresService {
             console.log("trying pgclient connect");
             yield this.client.connect();
             console.log("connected to db");
+            yield this.client.query('SET search_path TO dbo, public');
             yield this.client.query('CREATE EXTENSION IF NOT EXISTS vector');
             console.log("added extension");
             yield this.client.query(`
-            Create TABLE IF NOT EXISTS schema_embeddings (
+            Create TABLE IF NOT EXISTS public.schema_embeddings (
                 id SERIAL PRIMARY KEY,
                 schema_text TEXT,
                 embedding vector(1024)
@@ -52,15 +53,33 @@ class PostgresService {
             console.log("schemaText length", schemaText.length);
             console.log("this is type of schemaText", typeof (schemaText));
             const vectorLiteral = `[${embedding.join(",")}]`;
-            yield this.client.query(`INSERT INTO schema_embeddings (schema_text, embedding) VALUES ($1, $2::vector)`, [schemaText, vectorLiteral]);
+            yield this.client.query(`INSERT INTO public.schema_embeddings (schema_text, embedding) VALUES ($1, $2::vector)`, [schemaText, vectorLiteral]);
         });
     }
     findMatchingSchema(queryEmbedding) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             const formatted = `[${queryEmbedding.join(",")}]`;
-            const result = yield this.client.query("SELECT schema_text FROM schema_embeddings ORDER BY embedding <-> $1::vector LIMIT 1;", [formatted]);
+            const result = yield this.client.query("SELECT schema_text FROM public.schema_embeddings ORDER BY embedding <-> $1::vector LIMIT 1;", [formatted]);
             return ((_a = result.rows[0]) === null || _a === void 0 ? void 0 : _a.schema_text) || "";
+        });
+    }
+    executeQuery(sql) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!this.client) {
+                    yield this.connect();
+                }
+                else {
+                    yield this.client.query('SET search_path TO dbo, public');
+                }
+                const result = yield this.client.query(sql);
+                return result.rows;
+            }
+            catch (error) {
+                console.error("Error executing SQL query:", error);
+                throw new Error("SQL execution failed");
+            }
         });
     }
 }
