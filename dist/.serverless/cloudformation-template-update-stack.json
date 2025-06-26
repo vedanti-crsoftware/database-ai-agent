@@ -176,7 +176,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/database-ai-agent/dev/1750424931121-2025-06-20T13:08:51.121Z/database-ai-agent.zip"
+          "S3Key": "serverless/database-ai-agent/dev/1750945507289-2025-06-26T13:45:07.289Z/database-ai-agent.zip"
         },
         "Handler": "lambda.handler",
         "Runtime": "nodejs20.x",
@@ -191,7 +191,8 @@
             "RDS_DB": "databaseaiagent",
             "RDS_PORT": "5432",
             "NODE_OPTIONS": "--enable-source-maps",
-            "AWS_REGION": "us-east-1"
+            "RDS_RESOURCE_ARN": "arn:aws:rds:us-east-1:852537407985:cluster:database-ai-agent-aurora",
+            "RDS_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:852537407985:secret:rds!cluster-6ac4bccb-a658-4cc9-8aff-2c1c076f554e-pB7YtO"
           }
         },
         "Role": {
@@ -216,14 +217,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersion9Wy9YihkX23joj9F0rKlIEuqy5GDXwp3DEtUEzJdM": {
+    "ApiLambdaVersionqYOjV9KWcxhpbkL571pxfyvqxhoekH6AS37YxLHxTs": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "DYl7gcpddCXzTmxYikCK95enJmGJNxBPt/S5raEg31w="
+        "CodeSha256": "AM+5gxyYeEJNjCG35J2cVY/3bItqe7wgTriO1HM76Jk="
       }
     },
     "HttpApi": {
@@ -334,7 +335,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersion9Wy9YihkX23joj9F0rKlIEuqy5GDXwp3DEtUEzJdM"
+        "Ref": "ApiLambdaVersionqYOjV9KWcxhpbkL571pxfyvqxhoekH6AS37YxLHxTs"
       },
       "Export": {
         "Name": "sls-database-ai-agent-dev-ApiLambdaFunctionQualifiedArn"
