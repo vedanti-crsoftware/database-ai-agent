@@ -1,0 +1,8 @@
+{
+    "embedding_model": "amazon.titan-embed-text-v2:0",
+    "model": {
+        "name": "Claude V2",
+        "provider": "Anthropic",
+        "model_id": "anthropic.claude-v2:1"
+    }
+}

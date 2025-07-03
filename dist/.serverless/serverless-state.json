@@ -33,6 +33,19 @@
         "RDS_RESOURCE_ARN": "arn:aws:rds:us-east-1:852537407985:cluster:database-ai-agent-aurora",
         "RDS_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:852537407985:secret:rds!cluster-6ac4bccb-a658-4cc9-8aff-2c1c076f554e-pB7YtO"
       },
+      "iamRoleStatements": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "s3:GetObject",
+            "s3:ListBucket"
+          ],
+          "Resource": [
+            "arn:aws:s3:::database-agent-configs",
+            "arn:aws:s3:::database-agent-configs/data/*"
+          ]
+        }
+      ],
       "stage": "dev",
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
@@ -171,6 +184,9 @@
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/database-ai-agent-dev*:*:*"
                           }
                         ]
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][0]"
                       }
                     ]
                   }
@@ -213,13 +229,13 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/database-ai-agent/dev/1750945507289-2025-06-26T13:45:07.289Z/database-ai-agent.zip"
+                "S3Key": "serverless/database-ai-agent/dev/1750968748412-2025-06-26T20:12:28.412Z/database-ai-agent.zip"
               },
               "Handler": "lambda.handler",
               "Runtime": "nodejs20.x",
               "FunctionName": "database-ai-agent-dev-api",
               "MemorySize": 1024,
-              "Timeout": 90,
+              "Timeout": 120,
               "Environment": {
                 "Variables": {
                   "RDS_HOST": "database-ai-agent-aurora-instance-1.c0rbgfquus96.us-east-1.rds.amazonaws.com",
@@ -251,14 +267,14 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersionqYOjV9KWcxhpbkL571pxfyvqxhoekH6AS37YxLHxTs": {
+          "ApiLambdaVersionc3bdhawafywe29pCsY1QdmEW3wg2vRRZlXM0lreBCs": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "AM+5gxyYeEJNjCG35J2cVY/3bItqe7wgTriO1HM76Jk="
+              "CodeSha256": "Ki+pdDx6KI8oBvb1WBTMFMonxUS7tEnxUif1ZMhZP28="
             }
           },
           "HttpApi": {
@@ -366,7 +382,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersionqYOjV9KWcxhpbkL571pxfyvqxhoekH6AS37YxLHxTs"
+              "Ref": "ApiLambdaVersionc3bdhawafywe29pCsY1QdmEW3wg2vRRZlXM0lreBCs"
             },
             "Export": {
               "Name": "sls-database-ai-agent-dev-ApiLambdaFunctionQualifiedArn"
@@ -498,7 +514,7 @@
     "functions": {
       "api": {
         "handler": "lambda.handler",
-        "timeout": 90,
+        "timeout": 120,
         "events": [
           {
             "httpApi": {
@@ -514,7 +530,7 @@
         "memory": 1024,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersionqYOjV9KWcxhpbkL571pxfyvqxhoekH6AS37YxLHxTs"
+        "versionLogicalId": "ApiLambdaVersionc3bdhawafywe29pCsY1QdmEW3wg2vRRZlXM0lreBCs"
       }
     },
     "configValidationMode": "warn",
@@ -536,7 +552,7 @@
     "artifact": "C:\\Projects Code\\db-ai\\dist\\.serverless\\database-ai-agent.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/database-ai-agent/dev/1750945507289-2025-06-26T13:45:07.289Z",
+    "artifactDirectoryName": "serverless/database-ai-agent/dev/1750968748412-2025-06-26T20:12:28.412Z",
     "artifact": "database-ai-agent.zip"
   }
 }

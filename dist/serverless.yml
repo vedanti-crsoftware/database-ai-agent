@@ -22,13 +22,21 @@ provider:
     RDS_DB: ${env:RDS_DB}
     RDS_PORT: ${env:RDS_PORT,'5432'}
     NODE_OPTIONS: '--enable-source-maps'
+  iamRoleStatements: 
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+        - s3:ListBucket
+      Resource:
+        - arn:aws:s3:::database-agent-configs
+        - arn:aws:s3:::database-agent-configs/data/* 
 plugins:
   - serverless-dotenv-plugin
 
 functions:
   api:
     handler: lambda.handler
-    timeout: 90
+    timeout: 120
     events:
       - httpApi:
           path: /generate-sql

@@ -134,6 +134,17 @@
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/database-ai-agent-dev*:*:*"
                     }
                   ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject",
+                    "s3:ListBucket"
+                  ],
+                  "Resource": [
+                    "arn:aws:s3:::database-agent-configs",
+                    "arn:aws:s3:::database-agent-configs/data/*"
+                  ]
                 }
               ]
             }
@@ -176,13 +187,13 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/database-ai-agent/dev/1750945507289-2025-06-26T13:45:07.289Z/database-ai-agent.zip"
+          "S3Key": "serverless/database-ai-agent/dev/1750968748412-2025-06-26T20:12:28.412Z/database-ai-agent.zip"
         },
         "Handler": "lambda.handler",
         "Runtime": "nodejs20.x",
         "FunctionName": "database-ai-agent-dev-api",
         "MemorySize": 1024,
-        "Timeout": 90,
+        "Timeout": 120,
         "Environment": {
           "Variables": {
             "RDS_HOST": "database-ai-agent-aurora-instance-1.c0rbgfquus96.us-east-1.rds.amazonaws.com",
@@ -217,14 +228,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersionqYOjV9KWcxhpbkL571pxfyvqxhoekH6AS37YxLHxTs": {
+    "ApiLambdaVersionc3bdhawafywe29pCsY1QdmEW3wg2vRRZlXM0lreBCs": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "AM+5gxyYeEJNjCG35J2cVY/3bItqe7wgTriO1HM76Jk="
+        "CodeSha256": "Ki+pdDx6KI8oBvb1WBTMFMonxUS7tEnxUif1ZMhZP28="
       }
     },
     "HttpApi": {
@@ -335,7 +346,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionqYOjV9KWcxhpbkL571pxfyvqxhoekH6AS37YxLHxTs"
+        "Ref": "ApiLambdaVersionc3bdhawafywe29pCsY1QdmEW3wg2vRRZlXM0lreBCs"
       },
       "Export": {
         "Name": "sls-database-ai-agent-dev-ApiLambdaFunctionQualifiedArn"

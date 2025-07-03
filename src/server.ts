@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import  express, { Request, Response } from "express";
-import { QueryService } from "./services/QueryService";
+import { QueryService } from "./query/QueryService";
 import { SchemaRequest } from "./types";
 import bodyParser from "body-parser";
 

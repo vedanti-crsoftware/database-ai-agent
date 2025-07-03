@@ -15,21 +15,51 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BedrockService = void 0;
 const client_bedrock_runtime_1 = require("@aws-sdk/client-bedrock-runtime");
 const node_http_handler_1 = require("@aws-sdk/node-http-handler");
+const jsonUtils_1 = require("../utils/jsonUtils");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 class BedrockService {
     constructor() {
-        this.client = new client_bedrock_runtime_1.BedrockRuntimeClient({ region: process.env.AWS_REGION, requestHandler: new node_http_handler_1.NodeHttpHandler({
-                connectionTimeout: 60000, // 5 seconds to establish connection
-                socketTimeout: 90000 // 60 seconds for data transfer
+        this.modelConfig = null;
+        this.client = new client_bedrock_runtime_1.BedrockRuntimeClient({
+            region: process.env.AWS_REGION,
+            requestHandler: new node_http_handler_1.NodeHttpHandler({
+                connectionTimeout: 60000,
+                socketTimeout: 90000
             })
+        });
+    }
+    loadModelConfig() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.modelConfig) {
+                const bucket = process.env.CONFIG_BUCKET || 'database-agent-configs';
+                // Update this path to point to config.json in the data/ folder
+                const key = 'data/config.json';
+                try {
+                    const config = yield jsonUtils_1.JSONLoader.loadFromS3(bucket, key);
+                    this.modelConfig = config;
+                    console.log("Model configuration loaded successfully");
+                }
+                catch (error) {
+                    console.error("Failed to load model configuration:", error);
+                    // Set default configuration as fallback
+                    this.modelConfig = {
+                        embedding_model: "amazon.titan-embed-text-v2:0",
+                        models: {
+                            model_id: "anthropic.claude-v2:1"
+                        }
+                    };
+                    console.log("Using default model configuration");
+                }
+            }
         });
     }
     getEmbedding(text) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield this.loadModelConfig();
             console.log("In BedrockService... this is getEmbedding");
             const input = {
-                "modelId": "amazon.titan-embed-text-v2:0",
+                "modelId": this.modelConfig.embedding_model || "amazon.titan-embed-text-v2:0",
                 "contentType": "application/json",
                 "accept": "*/*",
                 "body": JSON.stringify({ inputText: text }),
@@ -42,9 +72,10 @@ class BedrockService {
     }
     getClaudeResponse(prompt) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield this.loadModelConfig();
             console.log("Hey we are in the claudeClient");
             const input = {
-                "modelId": "anthropic.claude-v2:1",
+                "modelId": this.modelConfig.model.model_id || "anthropic.claude-v2:1",
                 "contentType": "application/json",
                 "accept": "*/*",
                 "body": JSON.stringify({
