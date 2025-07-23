@@ -36,7 +36,7 @@ plugins:
 functions:
   api:
     handler: lambda.handler
-    timeout: 120
+    timeout: 300
     events:
       - httpApi:
           path: /generate-sql

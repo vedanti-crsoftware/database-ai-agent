@@ -229,13 +229,13 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/database-ai-agent/dev/1750968748412-2025-06-26T20:12:28.412Z/database-ai-agent.zip"
+                "S3Key": "serverless/database-ai-agent/dev/1751983271626-2025-07-08T14:01:11.626Z/database-ai-agent.zip"
               },
               "Handler": "lambda.handler",
               "Runtime": "nodejs20.x",
               "FunctionName": "database-ai-agent-dev-api",
               "MemorySize": 1024,
-              "Timeout": 120,
+              "Timeout": 300,
               "Environment": {
                 "Variables": {
                   "RDS_HOST": "database-ai-agent-aurora-instance-1.c0rbgfquus96.us-east-1.rds.amazonaws.com",
@@ -267,14 +267,14 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersionc3bdhawafywe29pCsY1QdmEW3wg2vRRZlXM0lreBCs": {
+          "ApiLambdaVersionQ1G1YSujv0w6CFzObgXFCN0DrhlVH3tl8dFrT6L0zo": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "Ki+pdDx6KI8oBvb1WBTMFMonxUS7tEnxUif1ZMhZP28="
+              "CodeSha256": "P5P2pnN4CHAVYoXckGJ47zzbd8QcPhbly6a2gf9pWxI="
             }
           },
           "HttpApi": {
@@ -382,7 +382,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersionc3bdhawafywe29pCsY1QdmEW3wg2vRRZlXM0lreBCs"
+              "Ref": "ApiLambdaVersionQ1G1YSujv0w6CFzObgXFCN0DrhlVH3tl8dFrT6L0zo"
             },
             "Export": {
               "Name": "sls-database-ai-agent-dev-ApiLambdaFunctionQualifiedArn"
@@ -514,7 +514,7 @@
     "functions": {
       "api": {
         "handler": "lambda.handler",
-        "timeout": 120,
+        "timeout": 300,
         "events": [
           {
             "httpApi": {
@@ -530,7 +530,7 @@
         "memory": 1024,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersionc3bdhawafywe29pCsY1QdmEW3wg2vRRZlXM0lreBCs"
+        "versionLogicalId": "ApiLambdaVersionQ1G1YSujv0w6CFzObgXFCN0DrhlVH3tl8dFrT6L0zo"
       }
     },
     "configValidationMode": "warn",
@@ -552,7 +552,7 @@
     "artifact": "C:\\Projects Code\\db-ai\\dist\\.serverless\\database-ai-agent.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/database-ai-agent/dev/1750968748412-2025-06-26T20:12:28.412Z",
+    "artifactDirectoryName": "serverless/database-ai-agent/dev/1751983271626-2025-07-08T14:01:11.626Z",
     "artifact": "database-ai-agent.zip"
   }
 }

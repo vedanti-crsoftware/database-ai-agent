@@ -36,9 +36,9 @@ app.post("/generate-sql", async (req : any, res : any) => {
 
     try {
         console.log("Processing schema and query...");
-        const { sql, result } = await queryService.handleSchemaAndQuery(schema, query);
+        const response = await queryService.handleSchemaAndQuery(schema, query);
         console.log("SQL generation and execution successful");
-        res.json({ sql, result });
+         res.json(response); 
     } catch (err) {
         console.error("Error generating SQL & Execution:", err);
         res.status(500).json({error: "Something went wrong"});

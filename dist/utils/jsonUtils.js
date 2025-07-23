@@ -16,8 +16,8 @@ exports.JSONLoader = void 0;
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const s3 = new aws_sdk_1.default.S3({
     httpOptions: {
-        timeout: 65000, // 25 seconds
-        connectTimeout: 50000 // 5 seconds
+        timeout: 120000, // 25 seconds
+        connectTimeout: 90000 // 5 seconds
     }
 });
 class JSONLoader {

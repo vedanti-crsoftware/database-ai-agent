@@ -2,8 +2,8 @@ import AWS from 'aws-sdk';
 
 const s3 = new AWS.S3({
     httpOptions: {
-    timeout: 65000,  // 25 seconds
-    connectTimeout: 50000  // 5 seconds
+    timeout: 120000,  // 25 seconds
+    connectTimeout: 90000  // 5 seconds
   }
 });
 

@@ -43,9 +43,9 @@ app.post("/generate-sql", (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
     try {
         console.log("Processing schema and query...");
-        const { sql, result } = yield queryService.handleSchemaAndQuery(schema, query);
+        const response = yield queryService.handleSchemaAndQuery(schema, query);
         console.log("SQL generation and execution successful");
-        res.json({ sql, result });
+        res.json(response); // This will now include chartRecommendation if available
     }
     catch (err) {
         console.error("Error generating SQL & Execution:", err);

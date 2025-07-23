@@ -1,8 +1,10 @@
 import { BedrockService } from "../aws/BedrockService";
 import { PostgresService } from "../db/PostgresService";
 import { JSONLoader } from "../utils/jsonUtils";
+import fs from 'fs';
+import path from 'path';
 import prompts from "../prompts/prompts.json";
-import localPrompts from "../prompts/prompts.json";
+import localPrompts from "../data/prompts.json";
 export class QueryService {
     private bedrock: BedrockService;
     private postgres: PostgresService;
@@ -27,29 +29,28 @@ export class QueryService {
         console.log("done inialize in queryservice");
     }
 
-private async loadPromptsFromS3() {
-    const bucket = process.env.CONFIG_BUCKET || 'database-agent-configs';
+    private async loadPromptsFromS3() {
+        const bucket = process.env.CONFIG_BUCKET || 'database-agent-configs';
     
-    // Update this path - the file is directly in the data/ folder, not in data/data/
-    const key = 'data/prompts.json';
-    
-    console.log(`Attempting to load prompts from S3: ${bucket}/${key}`);
-    
-    try {
-        const s3Prompts = await JSONLoader.loadFromS3(bucket, key);
+        const key = 'data/prompts.json';
         
-        // Only update prompts if S3 load was successful
-        if (s3Prompts) {
-            this.prompts = s3Prompts;
-            console.log("Successfully loaded prompts from S3");
+        console.log(`Attempting to load prompts from S3: ${bucket}/${key}`);
+        
+        try {
+            const s3Prompts = await JSONLoader.loadFromS3(bucket, key);
+            
+           
+            if (s3Prompts) {
+                this.prompts = s3Prompts;
+                console.log("Successfully loaded prompts from S3");
+            }
+        } catch (error) {
+            console.error(`Failed to load prompts from S3 at ${bucket}/${key}:`, error);
+            
         }
-    } catch (error) {
-        console.error(`Failed to load prompts from S3 at ${bucket}/${key}:`, error);
-        // Don't throw - we'll use the fallback prompts
     }
-}
 
-    async handleSchemaAndQuery(schema: string, query: string): Promise<{sql: string, result: any[]}>  {
+    async handleSchemaAndQuery(schema: string, query: string): Promise<{sql: string, result: any[], chartRecommendation?: any}>  {
         
         console.log("In QueryService.. handleSchemaAndQuery");
         const schemaEmbedding = await this.bedrock.getEmbedding(schema);
@@ -73,6 +74,56 @@ private async loadPromptsFromS3() {
         const result = await this.postgres.executeQuery(sql);
         console.log("SQL execution complete, returning results");
         
-        return { sql, result };
+        try {
+            const chartRecommendation = await this.getChartRecommendation(sql, result);
+            console.log("Chart recommendation generated successfully");
+            return { sql, result, chartRecommendation };
+        } catch (error) {
+            console.error("Error generating chart recommendation:", error);
+            return { sql, result };
+        }
+    }
+
+    async executeQuery(sql: string): Promise<any[]> {
+        return await this.postgres.executeQuery(sql);
+    }
+    
+    async getChartRecommendation(sql: string, data: any[]): Promise<any> {
+        try {
+            
+            const promptTemplate = this.prompts.chartRecommendationPrompt;
+            
+            
+            const prompt = promptTemplate
+            .replace("{{sql}}", sql)
+            .replace("{{data}}", JSON.stringify(data, null, 2));
+            
+      
+            const response = await this.bedrock.getClaudeResponse(prompt);
+            
+          
+            return this.extractJsonFromResponse(response);
+        } catch (error) {
+            console.error("Failed to generate chart recommendation:", error);
+            throw new Error("Failed to generate chart recommendation");
+        }
+    }
+
+    private extractJsonFromResponse(response: string): any {
+        try {
+            
+            return JSON.parse(response);
+        } catch (e) {
+            
+            const jsonMatch = response.match(/({[\s\S]*})/);
+            if (jsonMatch && jsonMatch[0]) {
+            try {
+                return JSON.parse(jsonMatch[0]);
+            } catch (err) {
+                throw new Error("Could not extract valid JSON from response");
+            }
+            }
+            throw new Error("No valid JSON found in response");
+        }
     }
 }
